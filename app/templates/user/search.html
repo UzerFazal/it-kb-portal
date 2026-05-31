@@ -1,0 +1,96 @@
+{% extends "base/layout.html" %}
+{% block title %}Search{% if q %}: {{ q }}{% endif %} — IT Knowledge Base{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top:24px;padding-bottom:40px;">
+
+  <div class="main-layout">
+
+    <!-- SIDEBAR: Category filter -->
+    <aside>
+      <div class="sidebar">
+        <div class="sidebar-header">Filter by Category</div>
+        <ul class="sidebar-nav">
+          <li>
+            <a href="/search?q={{ q }}" class="{% if not selected_category %}active{% endif %}">
+              <svg class="sidebar-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+              All Categories
+            </a>
+          </li>
+          {% for cat in categories %}
+          <li>
+            <a href="/search?q={{ q }}&category={{ cat.slug }}" class="{% if selected_category == cat.slug %}active{% endif %}">
+              <svg class="sidebar-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+              {{ cat.name }}
+            </a>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </aside>
+
+    <!-- RESULTS -->
+    <div class="content-area">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          {% if q %}
+          <h1 style="font-size:18px;font-weight:600;color:var(--text-primary);">Search results for <span style="color:var(--accent);">"{{ q }}"</span></h1>
+          <p style="font-size:13px;color:var(--text-muted);margin-top:2px;">{{ results|length }} article{% if results|length != 1 %}s{% endif %} found</p>
+          {% else %}
+          <h1 style="font-size:18px;font-weight:600;">Search Articles</h1>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Search box (inline) -->
+      <form action="/search" method="get" style="margin-bottom:20px;display:flex;gap:8px;">
+        <input type="text" name="q" value="{{ q }}" placeholder="Search by keyword..."
+          style="flex:1;height:38px;padding:0 12px;border:1px solid var(--border-strong);border-radius:4px;font-family:var(--font);font-size:13px;outline:none;"
+          onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border-strong)'"/>
+        {% if selected_category %}<input type="hidden" name="category" value="{{ selected_category }}"/>{% endif %}
+        <button type="submit" class="btn btn-primary">Search</button>
+      </form>
+
+      {% if q %}
+        {% if results %}
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            {% for art in results %}
+            <a href="/article/{{ art.slug }}" class="article-card">
+              <div class="article-card-title">{{ art.title }}</div>
+              {% if art.summary %}<div class="article-card-summary">{{ art.summary }}</div>{% endif %}
+              <div class="article-card-meta">
+                {% if art.category %}
+                <span class="tag tag-category">{{ art.category.name }}</span>
+                {% endif %}
+                {% for tag in art.tags %}
+                <span class="tag">{{ tag.name }}</span>
+                {% endfor %}
+                <span style="margin-left:auto;">
+                  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="12" height="12" style="display:inline;vertical-align:middle;margin-right:3px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  {{ art.views }} views
+                </span>
+                <span>Updated {{ art.updated_at.strftime('%b %d, %Y') }}</span>
+              </div>
+            </a>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="card" style="text-align:center;padding:48px 24px;">
+            <svg width="40" height="40" fill="none" stroke="var(--text-muted)" stroke-width="1.5" viewBox="0 0 24 24" style="margin:0 auto 12px;display:block;">
+              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+            </svg>
+            <p style="font-size:15px;font-weight:500;color:var(--text-secondary);margin-bottom:6px;">No results found for "{{ q }}"</p>
+            <p style="font-size:13px;color:var(--text-muted);">Try different keywords or <a href="/" style="color:var(--accent);">browse categories</a></p>
+          </div>
+        {% endif %}
+      {% else %}
+        <div class="card" style="text-align:center;padding:48px 24px;">
+          <p style="font-size:14px;color:var(--text-muted);">Enter a keyword to search articles</p>
+        </div>
+      {% endif %}
+
+    </div><!-- /content-area -->
+
+  </div><!-- /main-layout -->
+</div>
+{% endblock %}

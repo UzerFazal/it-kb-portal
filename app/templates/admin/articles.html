@@ -1,0 +1,47 @@
+{% extends "base/layout.html" %}
+{% block title %}Articles — Admin{% endblock %}
+{% block content %}
+<div class="container" style="padding-top:24px;padding-bottom:40px;">
+  <div class="flex items-center justify-between mb-4">
+    <div class="flex items-center gap-3">
+      <a href="/admin/" style="color:var(--text-muted);text-decoration:none;font-size:13px;">← Dashboard</a>
+      <h1 style="font-size:20px;font-weight:600;">Articles</h1>
+    </div>
+    <a href="/admin/articles/new" class="btn btn-primary">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      New Article
+    </a>
+  </div>
+  <div class="card">
+    <table class="table">
+      <thead><tr><th>Title</th><th>Category</th><th>Status</th><th>Views</th><th>Updated</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for art in articles %}
+        <tr>
+          <td><a href="/article/{{ art.slug }}" target="_blank" style="color:var(--accent);text-decoration:none;font-weight:500;">{{ art.title }}</a></td>
+          <td>{% if art.category %}<span class="tag tag-category">{{ art.category.name }}</span>{% else %}<span style="color:var(--text-muted);">—</span>{% endif %}</td>
+          <td>{% if art.is_published %}<span class="badge badge-green">Published</span>{% else %}<span class="badge badge-gray">Draft</span>{% endif %}</td>
+          <td style="font-family:var(--mono);font-size:12px;">{{ art.views }}</td>
+          <td style="color:var(--text-muted);font-size:12px;">{{ art.updated_at.strftime('%b %d, %Y') }}</td>
+          <td>
+            <div class="flex gap-2">
+              <a href="/admin/articles/{{ art.id }}/edit" class="btn btn-secondary btn-sm">Edit</a>
+              <form method="post" action="/admin/articles/{{ art.id }}/delete" onsubmit="return confirm('Delete this article?')">
+                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% if total_pages > 1 %}
+    <div style="padding:12px 20px;border-top:1px solid var(--border);display:flex;gap:8px;">
+      {% for p in range(1, total_pages+1) %}
+      <a href="?page={{ p }}" class="btn {% if p == page %}btn-primary{% else %}btn-secondary{% endif %} btn-sm">{{ p }}</a>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

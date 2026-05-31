@@ -1,0 +1,120 @@
+{% extends "base/layout.html" %}
+{% block title %}{% if article %}Edit{% else %}New{% endif %} Article — Admin{% endblock %}
+{% block extra_head %}
+<style>
+  .editor-toolbar { display:flex; gap:4px; padding:6px 8px; background:var(--surface-alt); border:1px solid var(--border-strong); border-bottom:none; border-radius:4px 4px 0 0; flex-wrap:wrap; }
+  .editor-toolbar button { background:var(--surface); border:1px solid var(--border); border-radius:3px; padding:3px 8px; font-size:12px; cursor:pointer; color:var(--text-secondary); font-family:var(--mono); }
+  .editor-toolbar button:hover { background:var(--accent-subtle); color:var(--accent); border-color:var(--accent); }
+  #content { border-radius:0 0 4px 4px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top:24px;padding-bottom:40px;max-width:900px;">
+  <div class="flex items-center gap-3 mb-4">
+    <a href="/admin/articles" style="color:var(--text-muted);text-decoration:none;font-size:13px;">← Articles</a>
+    <h1 style="font-size:20px;font-weight:600;">{% if article %}Edit Article{% else %}New Article{% endif %}</h1>
+  </div>
+
+  {% if error %}<div class="alert alert-danger mb-4">{{ error }}</div>{% endif %}
+
+  <div class="card">
+    <div class="card-body">
+      <form method="post" action="/admin/articles/{% if article %}{{ article.id }}/edit{% else %}new{% endif %}">
+
+        <div class="form-group">
+          <label class="form-label">Title *</label>
+          <input class="form-input" type="text" name="title" required value="{{ article.title if article else '' }}" placeholder="e.g. How to reset your password"/>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Summary</label>
+          <input class="form-input" type="text" name="summary" value="{{ article.summary if article else '' }}" placeholder="One-line description shown in search results and cards"/>
+          <p class="form-hint">Shown as a short description in search results. Keep it under 150 characters.</p>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">Category</label>
+            <select class="form-select" name="category_id">
+              <option value="0">— None —</option>
+              {% for cat in categories %}
+              <option value="{{ cat.id }}" {% if article and article.category_id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tags</label>
+            <input class="form-input" type="text" name="tags_raw" value="{{ tags_str if tags_str is defined else '' }}" placeholder="vpn, password, email (comma separated)"/>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Content (HTML) *</label>
+          <div class="editor-toolbar">
+            <button type="button" onclick="ins('<h2>', '</h2>')"><b>H2</b></button>
+            <button type="button" onclick="ins('<h3>', '</h3>')"><b>H3</b></button>
+            <button type="button" onclick="ins('<strong>', '</strong>')"><b>B</b></button>
+            <button type="button" onclick="ins('<em>', '</em>')"><i>I</i></button>
+            <button type="button" onclick="ins('<code>', '</code>')">code</button>
+            <button type="button" onclick="ins('<pre><code>', '</code></pre>')">pre</button>
+            <button type="button" onclick="ins('<ul>\n  <li>', '</li>\n</ul>')">ul</button>
+            <button type="button" onclick="ins('<ol>\n  <li>', '</li>\n</ol>')">ol</button>
+            <button type="button" onclick="ins('<li>', '</li>')">li</button>
+            <button type="button" onclick="ins('<p>', '</p>')">p</button>
+            <button type="button" onclick="ins('<hr>', '')">hr</button>
+            <button type="button" onclick="ins('<blockquote>', '</blockquote>')">quote</button>
+            <button type="button" onclick="insStep()">step</button>
+          </div>
+          <textarea class="form-textarea" id="content" name="content" rows="22" required style="border-radius:0 0 4px 4px;min-height:380px;">{{ article.content if article else '' }}</textarea>
+          <p class="form-hint">Write HTML. Use &lt;h2&gt; for section headings, &lt;ol&gt;&lt;li&gt; for step lists. Click toolbar buttons to insert snippets at cursor.</p>
+        </div>
+
+        <div class="form-group" style="display:flex;align-items:center;gap:10px;">
+          <input type="checkbox" id="is_published" name="is_published" value="on" {% if not article or article.is_published %}checked{% endif %} style="width:16px;height:16px;accent-color:var(--accent);"/>
+          <label for="is_published" style="font-size:13px;color:var(--text-primary);cursor:pointer;">Published (visible to users)</label>
+        </div>
+
+        <div class="flex gap-2">
+          <button type="submit" class="btn btn-primary">
+            {% if article %}Save Changes{% else %}Create Article{% endif %}
+          </button>
+          <a href="/admin/articles" class="btn btn-secondary">Cancel</a>
+          {% if article %}
+          <a href="/article/{{ article.slug }}" target="_blank" class="btn btn-secondary" style="margin-left:auto;">Preview →</a>
+          {% endif %}
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function ins(open, close) {
+  const ta = document.getElementById('content');
+  const s = ta.selectionStart, e = ta.selectionEnd;
+  const selected = ta.value.substring(s, e);
+  const inserted = open + selected + close;
+  ta.value = ta.value.substring(0, s) + inserted + ta.value.substring(e);
+  ta.selectionStart = s + open.length;
+  ta.selectionEnd = s + open.length + selected.length;
+  ta.focus();
+}
+function insStep() {
+  const snippet = `<div class="step-box">
+  <div class="step-num">1</div>
+  <div class="step-content">
+    <strong>Step title</strong>
+    <p>Description of what to do.</p>
+  </div>
+</div>`;
+  const ta = document.getElementById('content');
+  const s = ta.selectionStart;
+  ta.value = ta.value.substring(0, s) + snippet + ta.value.substring(s);
+  ta.focus();
+}
+</script>
+{% endblock %}

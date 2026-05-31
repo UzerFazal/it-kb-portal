@@ -1,0 +1,125 @@
+{% extends "base/layout.html" %}
+
+{% block title %}IT Knowledge Base — Home{% endblock %}
+
+{% block content %}
+<!-- HERO -->
+<div style="background:linear-gradient(135deg,#172b4d 0%,#0052cc 100%);padding:40px 0 48px;">
+  <div class="container" style="text-align:center;">
+    <h1 style="color:#fff;font-size:26px;font-weight:600;margin-bottom:10px;letter-spacing:-.3px;">
+      IT Support Knowledge Base
+    </h1>
+    <p style="color:rgba(255,255,255,.7);font-size:14px;margin-bottom:28px;">
+      Find step-by-step solutions to common IT issues · {{ total_articles }} articles available
+    </p>
+    <form action="/search" method="get" style="max-width:560px;margin:0 auto;position:relative;">
+      <svg style="position:absolute;left:16px;top:50%;transform:translateY(-50%);color:#97a0af;" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input type="text" name="q" placeholder="Search: VPN, password reset, printer, email setup..."
+        style="width:100%;height:46px;border-radius:6px;border:none;padding:0 120px 0 44px;font-family:var(--font);font-size:14px;outline:none;box-shadow:0 4px 16px rgba(0,0,0,.25);"/>
+      <button type="submit" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:var(--accent);color:#fff;border:none;padding:8px 18px;border-radius:4px;font-family:var(--font);font-size:13px;font-weight:500;cursor:pointer;">
+        Search
+      </button>
+    </form>
+  </div>
+</div>
+
+<div class="container" style="padding-top:32px;padding-bottom:40px;">
+
+  <!-- CATEGORIES GRID -->
+  <div style="margin-bottom:36px;">
+    <div class="flex items-center justify-between mb-4">
+      <h2 style="font-size:16px;font-weight:600;color:var(--text-primary);">Browse by Category</h2>
+    </div>
+    <div class="grid-4">
+      {% for cat in categories %}
+      <a href="/category/{{ cat.slug }}" style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:18px;text-decoration:none;transition:border-color .15s,box-shadow .15s;display:block;"
+         onmouseover="this.style.borderColor='#0052cc';this.style.boxShadow='0 3px 12px rgba(9,30,66,.15)'"
+         onmouseout="this.style.borderColor='var(--border)';this.style.boxShadow='none'">
+        <div style="width:36px;height:36px;background:var(--accent-subtle);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;">
+          {{ category_icon(cat.icon) }}
+        </div>
+        <div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:3px;">{{ cat.name }}</div>
+        <div style="font-size:12px;color:var(--text-muted);">{{ cat.article_count }} article{% if cat.article_count != 1 %}s{% endif %}</div>
+        {% if cat.description %}
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:6px;line-height:1.4;">{{ cat.description }}</div>
+        {% endif %}
+      </a>
+      {% else %}
+      <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted);font-size:13px;">
+        No categories yet. <a href="/admin/categories" style="color:var(--accent);">Add one in admin panel.</a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- TWO COLUMNS: Popular + Recent -->
+  <div class="grid-2" style="gap:24px;">
+
+    <!-- POPULAR -->
+    <div class="card">
+      <div class="card-header">
+        <h2>
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:inline;vertical-align:middle;margin-right:6px;color:var(--accent);">
+            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>
+          </svg>
+          Most Viewed
+        </h2>
+      </div>
+      <div style="padding:8px 0;">
+        {% for art in popular %}
+        <a href="/article/{{ art.slug }}" style="display:flex;align-items:center;justify-content:space-between;padding:10px 20px;text-decoration:none;border-bottom:{% if not loop.last %}1px solid var(--border){% endif %};"
+           onmouseover="this.style.background='var(--surface-alt)'"
+           onmouseout="this.style.background='transparent'">
+          <div>
+            <div style="font-size:13px;font-weight:500;color:var(--accent);margin-bottom:2px;">{{ art.title }}</div>
+            <div style="font-size:11px;color:var(--text-muted);">
+              {% if art.category %}{{ art.category.name }}{% endif %}
+            </div>
+          </div>
+          <div style="font-size:11px;color:var(--text-muted);font-family:var(--mono);white-space:nowrap;margin-left:12px;">
+            {{ art.views }} views
+          </div>
+        </a>
+        {% else %}
+        <div style="padding:20px;text-align:center;color:var(--text-muted);font-size:13px;">No articles yet.</div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- RECENTLY UPDATED -->
+    <div class="card">
+      <div class="card-header">
+        <h2>
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:inline;vertical-align:middle;margin-right:6px;color:var(--accent);">
+            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+          </svg>
+          Recently Updated
+        </h2>
+      </div>
+      <div style="padding:8px 0;">
+        {% for art in recent %}
+        <a href="/article/{{ art.slug }}" style="display:flex;align-items:center;justify-content:space-between;padding:10px 20px;text-decoration:none;border-bottom:{% if not loop.last %}1px solid var(--border){% endif %};"
+           onmouseover="this.style.background='var(--surface-alt)'"
+           onmouseout="this.style.background='transparent'">
+          <div>
+            <div style="font-size:13px;font-weight:500;color:var(--accent);margin-bottom:2px;">{{ art.title }}</div>
+            <div style="font-size:11px;color:var(--text-muted);">
+              {% if art.category %}{{ art.category.name }}{% endif %}
+            </div>
+          </div>
+          <div style="font-size:11px;color:var(--text-muted);font-family:var(--mono);white-space:nowrap;margin-left:12px;">
+            {{ art.updated_at.strftime('%b %d') }}
+          </div>
+        </a>
+        {% else %}
+        <div style="padding:20px;text-align:center;color:var(--text-muted);font-size:13px;">No articles yet.</div>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div><!-- /grid-2 -->
+
+</div>
+{% endblock %}
