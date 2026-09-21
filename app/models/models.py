@@ -37,6 +37,8 @@ class Category(Base):
     icon = Column(String(64), default="folder")   # Lucide icon name
     description = Column(Text, nullable=True)
     order = Column(Integer, default=0)
+    name_cs = Column(String(128), nullable=True)
+    description_cs = Column(Text, nullable=True)
 
     articles = relationship("Article", back_populates="category")
 
@@ -59,6 +61,9 @@ class Article(Base):
     slug = Column(String(256), unique=True, nullable=False)
     summary = Column(Text, nullable=True)
     content = Column(Text, nullable=False)   # HTML / markdown stored as HTML
+    title_cs = Column(String(256), nullable=True)
+    summary_cs = Column(Text, nullable=True)
+    content_cs = Column(Text, nullable=True)
     category_id = Column(Integer, ForeignKey("categories.id"), nullable=True)
     author_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     is_published = Column(Boolean, default=True)

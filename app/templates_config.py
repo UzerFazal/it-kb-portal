@@ -6,6 +6,20 @@ templates = Jinja2Templates(directory="app/templates")
 templates.env.globals["t"] = t
 templates.env.globals["lang"] = get_lang
 
+
+def _loc(request, obj, field: str):
+    """Return the Czech translation of a model field when the current
+    language is 'cs' and a translation exists, otherwise fall back to the
+    original (English) value."""
+    if get_lang(request) == "cs":
+        cs_value = getattr(obj, field + "_cs", None)
+        if cs_value:
+            return cs_value
+    return getattr(obj, field)
+
+
+templates.env.globals["loc"] = _loc
+
 def _category_icon(icon_name: str) -> str:
     icons = {
         "wifi": '<svg width="18" height="18" fill="none" stroke="#0052cc" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0114.08 0"/><path d="M1.42 9a16 16 0 0121.16 0"/><path d="M8.53 16.11a6 6 0 016.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>',

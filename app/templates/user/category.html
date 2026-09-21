@@ -1,10 +1,10 @@
 {% extends "base/layout.html" %}
-{% block title %}{{ category.name }} — IT Knowledge Base{% endblock %}
+{% block title %}{{ loc(request, category, 'name') }} — IT Knowledge Base{% endblock %}
 {% block content %}
 <div class="container" style="padding-top:24px;padding-bottom:40px;">
   <div class="breadcrumb mb-4">
     <a href="/">{{ t(request, 'home_breadcrumb') }}</a><span class="breadcrumb-sep">›</span>
-    <span style="color:var(--text-secondary);">{{ category.name }}</span>
+    <span style="color:var(--text-secondary);">{{ loc(request, category, 'name') }}</span>
   </div>
   <div class="main-layout">
     <aside>
@@ -14,7 +14,7 @@
           {% for cat in all_categories %}
           <li><a href="/category/{{ cat.slug }}" class="{% if cat.id == category.id %}active{% endif %}">
             <svg class="sidebar-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
-            {{ cat.name }}
+            {{ loc(request, cat, 'name') }}
           </a></li>
           {% endfor %}
         </ul>
@@ -23,8 +23,8 @@
     <div class="content-area">
       <div class="flex items-center justify-between mb-4">
         <div>
-          <h1 style="font-size:20px;font-weight:600;">{{ category.name }}</h1>
-          {% if category.description %}<p style="font-size:13px;color:var(--text-muted);margin-top:3px;">{{ category.description }}</p>{% endif %}
+          <h1 style="font-size:20px;font-weight:600;">{{ loc(request, category, 'name') }}</h1>
+          {% if category.description %}<p style="font-size:13px;color:var(--text-muted);margin-top:3px;">{{ loc(request, category, 'description') }}</p>{% endif %}
         </div>
         <span style="font-size:12px;color:var(--text-muted);">{{ articles|length }} {{ t(request, 'article_singular') if articles|length == 1 else t(request, 'article_plural') }}</span>
       </div>
@@ -32,8 +32,8 @@
       <div style="display:flex;flex-direction:column;gap:10px;">
         {% for art in articles %}
         <a href="/article/{{ art.slug }}" class="article-card">
-          <div class="article-card-title">{{ art.title }}</div>
-          {% if art.summary %}<div class="article-card-summary">{{ art.summary }}</div>{% endif %}
+          <div class="article-card-title">{{ loc(request, art, 'title') }}</div>
+          {% if art.summary %}<div class="article-card-summary">{{ loc(request, art, 'summary') }}</div>{% endif %}
           <div class="article-card-meta">
             {% for tag in art.tags %}<span class="tag" style="margin-right:4px;">{{ tag.name }}</span>{% endfor %}
             <span style="margin-left:auto;">{{ art.views }} {{ t(request, 'views') }} · {{ t(request, 'updated_prefix') }} {{ art.updated_at.strftime('%b %d, %Y') }}</span>

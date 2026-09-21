@@ -75,6 +75,9 @@ def search(
                 Article.title.ilike(search_term),
                 Article.summary.ilike(search_term),
                 Article.content.ilike(search_term),
+                Article.title_cs.ilike(search_term),
+                Article.summary_cs.ilike(search_term),
+                Article.content_cs.ilike(search_term),
             )
         )
         if category:

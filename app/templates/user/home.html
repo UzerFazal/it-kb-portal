@@ -40,10 +40,10 @@
         <div style="width:36px;height:36px;background:var(--accent-subtle);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;">
           {{ category_icon(cat.icon) }}
         </div>
-        <div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:3px;">{{ cat.name }}</div>
+        <div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:3px;">{{ loc(request, cat, 'name') }}</div>
         <div style="font-size:12px;color:var(--text-muted);">{{ cat.article_count }} {{ t(request, 'article_singular') if cat.article_count == 1 else t(request, 'article_plural') }}</div>
         {% if cat.description %}
-        <div style="font-size:12px;color:var(--text-secondary);margin-top:6px;line-height:1.4;">{{ cat.description }}</div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:6px;line-height:1.4;">{{ loc(request, cat, 'description') }}</div>
         {% endif %}
       </a>
       {% else %}
@@ -73,9 +73,9 @@
            onmouseover="this.style.background='var(--surface-alt)'"
            onmouseout="this.style.background='transparent'">
           <div>
-            <div style="font-size:13px;font-weight:500;color:var(--accent);margin-bottom:2px;">{{ art.title }}</div>
+            <div style="font-size:13px;font-weight:500;color:var(--accent);margin-bottom:2px;">{{ loc(request, art, 'title') }}</div>
             <div style="font-size:11px;color:var(--text-muted);">
-              {% if art.category %}{{ art.category.name }}{% endif %}
+              {% if art.category %}{{ loc(request, art.category, 'name') }}{% endif %}
             </div>
           </div>
           <div style="font-size:11px;color:var(--text-muted);font-family:var(--mono);white-space:nowrap;margin-left:12px;">
@@ -104,9 +104,9 @@
            onmouseover="this.style.background='var(--surface-alt)'"
            onmouseout="this.style.background='transparent'">
           <div>
-            <div style="font-size:13px;font-weight:500;color:var(--accent);margin-bottom:2px;">{{ art.title }}</div>
+            <div style="font-size:13px;font-weight:500;color:var(--accent);margin-bottom:2px;">{{ loc(request, art, 'title') }}</div>
             <div style="font-size:11px;color:var(--text-muted);">
-              {% if art.category %}{{ art.category.name }}{% endif %}
+              {% if art.category %}{{ loc(request, art.category, 'name') }}{% endif %}
             </div>
           </div>
           <div style="font-size:11px;color:var(--text-muted);font-family:var(--mono);white-space:nowrap;margin-left:12px;">
