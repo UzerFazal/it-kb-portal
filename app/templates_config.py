@@ -1,7 +1,10 @@
 import markupsafe
 from fastapi.templating import Jinja2Templates
+from app.i18n import t, get_lang
 
 templates = Jinja2Templates(directory="app/templates")
+templates.env.globals["t"] = t
+templates.env.globals["lang"] = get_lang
 
 def _category_icon(icon_name: str) -> str:
     icons = {

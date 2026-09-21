@@ -9,12 +9,12 @@
     <!-- SIDEBAR: Category filter -->
     <aside>
       <div class="sidebar">
-        <div class="sidebar-header">Filter by Category</div>
+        <div class="sidebar-header">{{ t(request, 'filter_by_category') }}</div>
         <ul class="sidebar-nav">
           <li>
             <a href="/search?q={{ q }}" class="{% if not selected_category %}active{% endif %}">
               <svg class="sidebar-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-              All Categories
+              {{ t(request, 'all_categories') }}
             </a>
           </li>
           {% for cat in categories %}
@@ -34,21 +34,21 @@
       <div class="flex items-center justify-between mb-4">
         <div>
           {% if q %}
-          <h1 style="font-size:18px;font-weight:600;color:var(--text-primary);">Search results for <span style="color:var(--accent);">"{{ q }}"</span></h1>
-          <p style="font-size:13px;color:var(--text-muted);margin-top:2px;">{{ results|length }} article{% if results|length != 1 %}s{% endif %} found</p>
+          <h1 style="font-size:18px;font-weight:600;color:var(--text-primary);">{{ t(request, 'search_results_for') }} <span style="color:var(--accent);">"{{ q }}"</span></h1>
+          <p style="font-size:13px;color:var(--text-muted);margin-top:2px;">{{ results|length }} {{ t(request, 'article_singular') if results|length == 1 else t(request, 'article_plural') }} {{ t(request, 'found_suffix') }}</p>
           {% else %}
-          <h1 style="font-size:18px;font-weight:600;">Search Articles</h1>
+          <h1 style="font-size:18px;font-weight:600;">{{ t(request, 'search_articles_title') }}</h1>
           {% endif %}
         </div>
       </div>
 
       <!-- Search box (inline) -->
       <form action="/search" method="get" style="margin-bottom:20px;display:flex;gap:8px;">
-        <input type="text" name="q" value="{{ q }}" placeholder="Search by keyword..."
+        <input type="text" name="q" value="{{ q }}" placeholder="{{ t(request, 'search_placeholder2') }}"
           style="flex:1;height:38px;padding:0 12px;border:1px solid var(--border-strong);border-radius:4px;font-family:var(--font);font-size:13px;outline:none;"
           onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border-strong)'"/>
         {% if selected_category %}<input type="hidden" name="category" value="{{ selected_category }}"/>{% endif %}
-        <button type="submit" class="btn btn-primary">Search</button>
+        <button type="submit" class="btn btn-primary">{{ t(request, 'search_button') }}</button>
       </form>
 
       {% if q %}
@@ -67,9 +67,9 @@
                 {% endfor %}
                 <span style="margin-left:auto;">
                   <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="12" height="12" style="display:inline;vertical-align:middle;margin-right:3px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                  {{ art.views }} views
+                  {{ art.views }} {{ t(request, 'views') }}
                 </span>
-                <span>Updated {{ art.updated_at.strftime('%b %d, %Y') }}</span>
+                <span>{{ t(request, 'updated_prefix') }} {{ art.updated_at.strftime('%b %d, %Y') }}</span>
               </div>
             </a>
             {% endfor %}
@@ -79,13 +79,13 @@
             <svg width="40" height="40" fill="none" stroke="var(--text-muted)" stroke-width="1.5" viewBox="0 0 24 24" style="margin:0 auto 12px;display:block;">
               <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
             </svg>
-            <p style="font-size:15px;font-weight:500;color:var(--text-secondary);margin-bottom:6px;">No results found for "{{ q }}"</p>
-            <p style="font-size:13px;color:var(--text-muted);">Try different keywords or <a href="/" style="color:var(--accent);">browse categories</a></p>
+            <p style="font-size:15px;font-weight:500;color:var(--text-secondary);margin-bottom:6px;">{{ t(request, 'no_results_for') }} "{{ q }}"</p>
+            <p style="font-size:13px;color:var(--text-muted);">{{ t(request, 'try_different') }} <a href="/" style="color:var(--accent);">{{ t(request, 'browse_categories') }}</a></p>
           </div>
         {% endif %}
       {% else %}
         <div class="card" style="text-align:center;padding:48px 24px;">
-          <p style="font-size:14px;color:var(--text-muted);">Enter a keyword to search articles</p>
+          <p style="font-size:14px;color:var(--text-muted);">{{ t(request, 'enter_keyword') }}</p>
         </div>
       {% endif %}
 

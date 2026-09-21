@@ -3,13 +3,13 @@
 {% block content %}
 <div class="container" style="padding-top:24px;padding-bottom:40px;">
   <div class="breadcrumb mb-4">
-    <a href="/">Home</a><span class="breadcrumb-sep">›</span>
+    <a href="/">{{ t(request, 'home_breadcrumb') }}</a><span class="breadcrumb-sep">›</span>
     <span style="color:var(--text-secondary);">{{ category.name }}</span>
   </div>
   <div class="main-layout">
     <aside>
       <div class="sidebar">
-        <div class="sidebar-header">All Categories</div>
+        <div class="sidebar-header">{{ t(request, 'all_categories') }}</div>
         <ul class="sidebar-nav">
           {% for cat in all_categories %}
           <li><a href="/category/{{ cat.slug }}" class="{% if cat.id == category.id %}active{% endif %}">
@@ -26,7 +26,7 @@
           <h1 style="font-size:20px;font-weight:600;">{{ category.name }}</h1>
           {% if category.description %}<p style="font-size:13px;color:var(--text-muted);margin-top:3px;">{{ category.description }}</p>{% endif %}
         </div>
-        <span style="font-size:12px;color:var(--text-muted);">{{ articles|length }} article{% if articles|length != 1 %}s{% endif %}</span>
+        <span style="font-size:12px;color:var(--text-muted);">{{ articles|length }} {{ t(request, 'article_singular') if articles|length == 1 else t(request, 'article_plural') }}</span>
       </div>
       {% if articles %}
       <div style="display:flex;flex-direction:column;gap:10px;">
@@ -36,14 +36,14 @@
           {% if art.summary %}<div class="article-card-summary">{{ art.summary }}</div>{% endif %}
           <div class="article-card-meta">
             {% for tag in art.tags %}<span class="tag" style="margin-right:4px;">{{ tag.name }}</span>{% endfor %}
-            <span style="margin-left:auto;">{{ art.views }} views · Updated {{ art.updated_at.strftime('%b %d, %Y') }}</span>
+            <span style="margin-left:auto;">{{ art.views }} {{ t(request, 'views') }} · {{ t(request, 'updated_prefix') }} {{ art.updated_at.strftime('%b %d, %Y') }}</span>
           </div>
         </a>
         {% endfor %}
       </div>
       {% else %}
       <div class="card" style="text-align:center;padding:48px 24px;">
-        <p style="color:var(--text-muted);font-size:13px;">No articles in this category yet.</p>
+        <p style="color:var(--text-muted);font-size:13px;">{{ t(request, 'no_articles_in_category') }}</p>
       </div>
       {% endif %}
     </div>

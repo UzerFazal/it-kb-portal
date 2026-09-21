@@ -1,13 +1,23 @@
 from fastapi import APIRouter, Request, Depends, Query
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from sqlalchemy.orm import Session
 from sqlalchemy import or_, func
 from app.templates_config import templates
 from app.database import get_db
 from app.models.models import Article, Category, Tag
 from app.auth import get_current_user
+from app.i18n import SUPPORTED_LANGS, LANG_COOKIE
 
 router = APIRouter()
+
+
+@router.get("/set-lang/{code}")
+def set_lang(code: str, request: Request):
+    referer = request.headers.get("referer", "/")
+    response = RedirectResponse(url=referer, status_code=303)
+    if code in SUPPORTED_LANGS:
+        response.set_cookie(LANG_COOKIE, code, max_age=60 * 60 * 24 * 365)
+    return response
 
 
 @router.get("/", response_class=HTMLResponse)
